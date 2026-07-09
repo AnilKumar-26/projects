@@ -1,0 +1,60 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - 02-azure-devops-pipeline/*
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  acrName: 'devopslabacr2026'
+  imageName: 'flask-api'
+  appName: 'flask-devops-app-2026'
+  workingDir: '02-azure-devops-pipeline'
+
+stages:
+  - stage: Build
+    jobs:
+      - job: BuildImage
+        steps:
+          - script: |
+              cd $(workingDir)
+              docker build -t $(acrName).azurecr.io/$(imageName):$(Build.BuildId) .
+            displayName: 'Build Docker image'
+
+  - stage: Push
+    dependsOn: Build
+    jobs:
+      - job: PushToACR
+        steps:
+          - task: Docker@2
+            displayName: 'Build and push image to ACR'
+            inputs:
+              containerRegistry: 'azure-devops-lab-connection'
+              repository: '$(imageName)'
+              command: 'buildAndPush'
+              Dockerfile: '$(workingDir)/Dockerfile'
+              buildContext: '$(workingDir)'
+              tags: '$(Build.BuildId)'
+
+  - stage: Deploy
+    dependsOn: Push
+    jobs:
+      - deployment: DeployToAppService
+        environment: 'production'
+        pool:
+          vmImage: ubuntu-latest
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: AzureWebAppContainer@1
+                  displayName: 'Deploy to Azure App Service'
+                  inputs:
+                    azureSubscription: 'azure-devops-lab-connection'
+                    appName: '$(appName)'
+                    containerRegistry: '$(acrName).azurecr.io'
+                    containerImageName: '$(acrName).azurecr.io/$(imageName):$(Build.BuildId)'
