@@ -39,8 +39,25 @@ stages:
               Dockerfile: '$(workingDir)/Dockerfile'
               buildContext: '$(workingDir)'
               tags: '$(Build.BuildId)'
-  - stage: Deploy
+  - stage: Scan
     dependsOn: Push
+    jobs:
+      - job: SonarScan
+        pool: 'Default'
+        steps:
+          - task: SonarQubePrepare@7
+            inputs:
+              SonarQube: 'sonarqube-connection'
+              scannerMode: 'CLI'
+              configMode: 'manual'
+              cliProjectKey: 'flask-api'
+              cliSources: '$(workingDir)'
+          - task: SonarQubeAnalyze@7
+          - task: SonarQubePublish@7
+            inputs:
+              pollingTimeoutSec: '300'
+  - stage: Deploy
+    dependsOn: Scan
     jobs:
       - deployment: DeployToAppService
         environment: 'production'
