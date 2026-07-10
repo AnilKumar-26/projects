@@ -39,7 +39,6 @@ stages:
               Dockerfile: '$(workingDir)/Dockerfile'
               buildContext: '$(workingDir)'
               tags: '$(Build.BuildId)'
-
   - stage: Deploy
     dependsOn: Push
     jobs:
@@ -56,5 +55,4 @@ stages:
                   inputs:
                     azureSubscription: 'azure-devops-lab-connection'
                     appName: '$(appName)'
-                    containerRegistry: '$(acrName).azurecr.io'
-                    containerImageName: '$(acrName).azurecr.io/$(imageName):$(Build.BuildId)'
+                    imageName: '$(acrName).azurecr.io/$(imageName):$(Build.BuildId)'
