@@ -56,6 +56,14 @@ stages:
           - task: SonarQubePublish@7
             inputs:
               pollingTimeoutSec: '300'
+          - script: |
+              STATUS=$(curl -s -u YOUR_SONAR_TOKEN: "http://localhost:9000/api/qualitygates/project_status?projectKey=flask-api" | grep -o '"status":"[A-Z]*"' | head -1 | cut -d'"' -f4)
+              echo "Quality Gate Status: $STATUS"
+              if [ "$STATUS" != "OK" ]; then
+                echo "##vso[task.logissue type=error]Quality Gate failed with status: $STATUS"
+                exit 1
+              fi
+            displayName: 'Enforce Quality Gate'
   - stage: Deploy
     dependsOn: Scan
     jobs:
