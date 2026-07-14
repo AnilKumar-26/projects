@@ -2,8 +2,6 @@ from flask import Flask, jsonify
 import socket
 import datetime
 
-AWS_ACCESS_KEY = "AKIAIOSFODNN7EXAMPLE"
-
 app = Flask(__name__)
 
 @app.route("/")
