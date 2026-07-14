@@ -52,7 +52,13 @@ stages:
               configMode: 'manual'
               cliProjectKey: 'flask-api'
               cliSources: '$(workingDir)'
+
+          - bash: |
+              echo "RAW PARAMS: $SONARQUBE_SCANNER_PARAMS"
+            displayName: 'DEBUG - show raw scanner params'
+
           - task: SonarQubeAnalyze@7
+  
           - task: SonarQubePublish@7
             inputs:
               pollingTimeoutSec: '300'
