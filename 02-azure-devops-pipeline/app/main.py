@@ -2,7 +2,7 @@ from flask import Flask, jsonify
 import socket
 import datetime
 
-DB_PASSWORD = "SuperSecret123!"
+AWS_ACCESS_KEY = "AKIAIOSFODNN7EXAMPLE"
 
 app = Flask(__name__)
 
