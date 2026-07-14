@@ -10,4 +10,4 @@ A collection of hands-on DevOps, Cloud, and Infrastructure-as-Code projects, bui
 | 02 | [Azure DevOps Pipeline](./02-azure-devops-pipeline) | CI/CD pipeline with SonarQube quality gate enforced before deployment to Azure App Service | Azure DevOps, Docker, SonarQube, ACR, App Service |
 
 ---
-*More projects added as they're completed. See individual project folders for detailed READMEs.*
+
