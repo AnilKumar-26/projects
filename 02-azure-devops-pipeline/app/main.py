@@ -2,6 +2,8 @@ from flask import Flask, jsonify
 import socket
 import datetime
 
+DB_PASSWORD = "SuperSecret123!"
+
 app = Flask(__name__)
 
 @app.route("/")
